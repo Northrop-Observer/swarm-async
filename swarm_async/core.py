@@ -31,7 +31,7 @@ class Swarm:
             client = OpenAI()
         self.client = client
 
-    def get_chat_completion(
+    async def get_chat_completion(
         self,
         agent: Agent,
         history: List,
@@ -68,7 +68,7 @@ class Swarm:
         if tools:
             create_params["parallel_tool_calls"] = agent.parallel_tool_calls
 
-        return self.client.chat.completions.create(**create_params)
+        return await self.client.chat.completions.create(**create_params)
 
     async def handle_function_result(self, result, debug) -> Result:
         if asyncio.iscoroutine(result):
@@ -266,7 +266,7 @@ class Swarm:
         while len(history) - init_len < max_turns and active_agent:
 
             # get completion with current history, agent
-            completion = self.get_chat_completion(
+            completion = await self.get_chat_completion(
                 agent=active_agent,
                 history=history,
                 context_variables=context_variables,
